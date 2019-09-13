@@ -56,7 +56,9 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.IpIdentifier;
 import org.shredzone.acme4j.challenge.TlsAlpn01Challenge;
 
 /**
@@ -134,11 +136,13 @@ public final class CertificateUtils {
 
         switch (id.getType()) {
             case Identifier.TYPE_DNS:
-                gns[0] = new GeneralName(GeneralName.dNSName, id.getDomain());
+                DnsIdentifier dnsId = (DnsIdentifier) id;
+                gns[0] = new GeneralName(GeneralName.dNSName, dnsId.getDomain());
                 break;
 
             case Identifier.TYPE_IP:
-                gns[0] = new GeneralName(GeneralName.iPAddress, id.getIP().getHostAddress());
+                IpIdentifier ipId = (IpIdentifier) id;
+                gns[0] = new GeneralName(GeneralName.iPAddress, ipId.getIP().getHostAddress());
                 break;
 
             default:

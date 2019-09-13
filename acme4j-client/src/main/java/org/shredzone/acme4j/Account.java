@@ -164,7 +164,7 @@ public class Account extends AcmeJsonResource {
         if (domain.isEmpty()) {
             throw new IllegalArgumentException("domain must not be empty");
         }
-        return preAuthorize(Identifier.dns(domain));
+        return preAuthorize(new DnsIdentifier(domain));
     }
 
     /**

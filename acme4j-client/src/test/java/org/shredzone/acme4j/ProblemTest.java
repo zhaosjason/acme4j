@@ -14,7 +14,9 @@
 package org.shredzone.acme4j;
 
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.shredzone.acme4j.toolbox.TestUtils.url;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -59,14 +61,14 @@ public class ProblemTest {
         assertThat(p1.getType(), is(URI.create("urn:ietf:params:acme:error:malformed")));
         assertThat(p1.getTitle(), is(nullValue()));
         assertThat(p1.getDetail(), is("Invalid underscore in DNS name \"_example.com\""));
-        assertThat(p1.getIdentifier().getDomain(), is("_example.com"));
+        assertThat(p1.getIdentifier().getValue(), is("_example.com"));
         assertThat(p1.toString(), is("Invalid underscore in DNS name \"_example.com\""));
 
         Problem p2 = subs.get(1);
         assertThat(p2.getType(), is(URI.create("urn:ietf:params:acme:error:rejectedIdentifier")));
         assertThat(p2.getTitle(), is(nullValue()));
         assertThat(p2.getDetail(), is("This CA will not issue for \"example.net\""));
-        assertThat(p2.getIdentifier().getDomain(), is("example.net"));
+        assertThat(p2.getIdentifier().getValue(), is("example.net"));
         assertThat(p2.toString(), is("This CA will not issue for \"example.net\""));
     }
 

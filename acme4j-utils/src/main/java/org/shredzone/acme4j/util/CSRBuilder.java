@@ -50,7 +50,9 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.IpIdentifier;
 
 /**
  * Generator for a CSR (Certificate Signing Request) suitable for ACME servers.
@@ -155,9 +157,11 @@ public class CSRBuilder {
     public void addIdentifier(Identifier id) {
         requireNonNull(id);
         if (Identifier.TYPE_DNS.equals(id.getType())) {
-            addDomain(id.getDomain());
+            DnsIdentifier dnsId = (DnsIdentifier) id;
+            addDomain(dnsId.getDomain());
         } else if (Identifier.TYPE_IP.equals(id.getType())) {
-            addIP(id.getIP());
+            IpIdentifier ipId = (IpIdentifier) id;
+            addIP(ipId.getIP());
         } else {
             throw new IllegalArgumentException("Unknown identifier type: " + id.getType());
         }

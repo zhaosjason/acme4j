@@ -14,7 +14,16 @@
 package org.shredzone.acme4j.util;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
@@ -43,7 +52,9 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.junit.Test;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.IpIdentifier;
 import org.shredzone.acme4j.challenge.TlsAlpn01Challenge;
 import org.shredzone.acme4j.toolbox.AcmeUtils;
 
@@ -98,7 +109,7 @@ public class CertificateUtilsTest {
         String subject = "example.com";
         byte[] acmeValidationV1 = AcmeUtils.sha256hash("rSoI9JpyvFi-ltdnBW0W1DjKstzG7cHixjzcOjwzAEQ");
 
-        X509Certificate cert = CertificateUtils.createTlsAlpn01Certificate(keypair, Identifier.dns(subject), acmeValidationV1);
+        X509Certificate cert = CertificateUtils.createTlsAlpn01Certificate(keypair, new DnsIdentifier(subject), acmeValidationV1);
 
         Instant now = Instant.now();
         Instant end = now.plus(Duration.ofDays(8));
@@ -139,7 +150,7 @@ public class CertificateUtilsTest {
         InetAddress subject = InetAddress.getLocalHost();
         byte[] acmeValidationV1 = AcmeUtils.sha256hash("rSoI9JpyvFi-ltdnBW0W1DjKstzG7cHixjzcOjwzAEQ");
 
-        X509Certificate cert = CertificateUtils.createTlsAlpn01Certificate(keypair, Identifier.ip(subject), acmeValidationV1);
+        X509Certificate cert = CertificateUtils.createTlsAlpn01Certificate(keypair, new IpIdentifier(subject), acmeValidationV1);
 
         assertThat(cert.getSubjectX500Principal().getName(), is("CN=acme.invalid"));
         assertThat(getIpSANs(cert), contains(subject));

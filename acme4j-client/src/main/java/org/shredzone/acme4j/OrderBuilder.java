@@ -72,7 +72,7 @@ public class OrderBuilder {
      * @return itself
      */
     public OrderBuilder domain(String domain) {
-        return identifier(Identifier.dns(domain));
+        return identifier(new DnsIdentifier(domain));
     }
 
     /**

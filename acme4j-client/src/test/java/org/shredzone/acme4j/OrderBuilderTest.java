@@ -13,7 +13,10 @@
  */
 package org.shredzone.acme4j;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.shredzone.acme4j.toolbox.AcmeUtils.parseTimestamp;
@@ -81,23 +84,23 @@ public class OrderBuilderTest {
                         .domains("example.com", "www.example.com")
                         .domain("example.org")
                         .domains(Arrays.asList("m.example.com", "m.example.org"))
-                        .identifier(Identifier.dns("d.example.com"))
+                        .identifier(new DnsIdentifier("d.example.com"))
                         .identifiers(Arrays.asList(
-                                    Identifier.dns("d2.example.com"),
-                                    Identifier.ip(InetAddress.getByName("192.168.1.2"))))
+                                    new DnsIdentifier("d2.example.com"),
+                                    new IpIdentifier(InetAddress.getByName("192.168.1.2"))))
                         .notBefore(notBefore)
                         .notAfter(notAfter)
                         .create();
 
         assertThat(order.getIdentifiers(), containsInAnyOrder(
-                        Identifier.dns("example.com"),
-                        Identifier.dns("www.example.com"),
-                        Identifier.dns("example.org"),
-                        Identifier.dns("m.example.com"),
-                        Identifier.dns("m.example.org"),
-                        Identifier.dns("d.example.com"),
-                        Identifier.dns("d2.example.com"),
-                        Identifier.ip(InetAddress.getByName("192.168.1.2"))));
+                        new DnsIdentifier("example.com"),
+                        new DnsIdentifier("www.example.com"),
+                        new DnsIdentifier("example.org"),
+                        new DnsIdentifier("m.example.com"),
+                        new DnsIdentifier("m.example.org"),
+                        new DnsIdentifier("d.example.com"),
+                        new DnsIdentifier("d2.example.com"),
+                        new IpIdentifier(InetAddress.getByName("192.168.1.2"))));
         assertThat(order.getNotBefore(), is(parseTimestamp("2016-01-01T00:10:00Z")));
         assertThat(order.getNotAfter(), is(parseTimestamp("2016-01-08T00:10:00Z")));
         assertThat(order.getExpires(), is(parseTimestamp("2016-01-10T00:00:00Z")));
@@ -155,7 +158,7 @@ public class OrderBuilderTest {
                         .recurrentEnableGet()
                         .create();
 
-        assertThat(order.getIdentifiers(), containsInAnyOrder(Identifier.dns("example.org")));
+        assertThat(order.getIdentifiers(), containsInAnyOrder(new DnsIdentifier("example.org")));
         assertThat(order.getNotBefore(), is(nullValue()));
         assertThat(order.getNotAfter(), is(nullValue()));
         assertThat(order.isRecurrent(), is(true));

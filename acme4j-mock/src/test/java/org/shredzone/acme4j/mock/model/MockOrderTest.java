@@ -14,8 +14,16 @@
 package org.shredzone.acme4j.mock.model;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
-import static org.hamcrest.Matchers.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -26,6 +34,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
 import org.junit.Test;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
 import org.shredzone.acme4j.Problem;
 import org.shredzone.acme4j.Status;
@@ -39,8 +48,8 @@ import org.shredzone.acme4j.toolbox.JSONBuilder;
  * Unit tests for {@link MockOrder}.
  */
 public class MockOrderTest {
-    private static final Identifier IDENTIFIER = Identifier.dns("example.org");
-    private static final Identifier IDENTIFIER2 = Identifier.dns("www.example.org");
+    private static final Identifier IDENTIFIER = new DnsIdentifier("example.org");
+    private static final Identifier IDENTIFIER2 = new DnsIdentifier("www.example.org");
 
     /**
      * Test creation and default values.

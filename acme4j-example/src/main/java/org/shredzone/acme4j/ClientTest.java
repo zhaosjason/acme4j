@@ -227,7 +227,7 @@ public class ClientTest {
      *            {@link Authorization} to perform
      */
     private void authorize(Authorization auth) throws AcmeException {
-        LOG.info("Authorization for domain {}", auth.getIdentifier().getDomain());
+        LOG.info("Authorization for domain {}", auth.getIdentifier().getValue());
 
         // The authorization is already valid. No need to process a challenge.
         if (auth.getStatus() == Status.VALID) {
@@ -243,7 +243,7 @@ public class ClientTest {
 
             case DNS:
                 challenge = dnsChallenge(auth);
-                break;
+                break; 
         }
 
         if (challenge == null) {
@@ -281,7 +281,7 @@ public class ClientTest {
         // All reattempts are used up and there is still no valid authorization?
         if (challenge.getStatus() != Status.VALID) {
             throw new AcmeException("Failed to pass the challenge for domain "
-                    + auth.getIdentifier().getDomain() + ", ... Giving up.");
+                    + auth.getIdentifier().getValue() + ", ... Giving up.");
         }
 
         LOG.info("Challenge has been completed. Remember to remove the validation resource.");
@@ -312,7 +312,7 @@ public class ClientTest {
         // Output the challenge, wait for acknowledge...
         LOG.info("Please create a file in your web server's base directory.");
         LOG.info("It must be reachable at: http://{}/.well-known/acme-challenge/{}",
-                    auth.getIdentifier().getDomain(), challenge.getToken());
+                auth.getIdentifier().getValue(), challenge.getToken());
         LOG.info("File name: {}", challenge.getToken());
         LOG.info("Content: {}", challenge.getAuthorization());
         LOG.info("The file must not contain any leading or trailing whitespaces or line breaks!");
@@ -321,7 +321,7 @@ public class ClientTest {
         StringBuilder message = new StringBuilder();
         message.append("Please create a file in your web server's base directory.\n\n");
         message.append("http://")
-                    .append(auth.getIdentifier().getDomain())
+                .append(auth.getIdentifier().getValue())
                     .append("/.well-known/acme-challenge/")
                     .append(challenge.getToken())
                     .append("\n\n");
@@ -354,13 +354,13 @@ public class ClientTest {
         // Output the challenge, wait for acknowledge...
         LOG.info("Please create a TXT record:");
         LOG.info("_acme-challenge.{}. IN TXT {}",
-                    auth.getIdentifier().getDomain(), challenge.getDigest());
+                auth.getIdentifier().getValue(), challenge.getDigest());
         LOG.info("If you're ready, dismiss the dialog...");
 
         StringBuilder message = new StringBuilder();
         message.append("Please create a TXT record:\n\n");
         message.append("_acme-challenge.")
-                    .append(auth.getIdentifier().getDomain())
+                .append(auth.getIdentifier().getValue())
                     .append(". IN TXT ")
                     .append(challenge.getDigest());
         acceptChallenge(message.toString());

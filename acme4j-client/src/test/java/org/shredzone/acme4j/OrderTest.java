@@ -74,8 +74,8 @@ public class OrderTest {
         assertThat(order.getLocation(), is(locationUrl));
 
         assertThat(order.getIdentifiers(), containsInAnyOrder(
-                    Identifier.dns("example.com"),
-                    Identifier.dns("www.example.com")));
+                    new DnsIdentifier("example.com"),
+                    new DnsIdentifier("www.example.com")));
         assertThat(order.getNotBefore(), is(parseTimestamp("2016-01-01T00:00:00Z")));
         assertThat(order.getNotAfter(), is(parseTimestamp("2016-01-08T00:00:00Z")));
         assertThat(order.getCertificate().getLocation(), is(url("https://example.com/acme/cert/1234")));
@@ -193,8 +193,8 @@ public class OrderTest {
         assertThat(order.getLocation(), is(locationUrl));
 
         assertThat(order.getIdentifiers(), containsInAnyOrder(
-                        Identifier.dns("example.com"),
-                        Identifier.dns("www.example.com")));
+                        new DnsIdentifier("example.com"),
+                        new DnsIdentifier("www.example.com")));
         assertThat(order.getNotBefore(), is(parseTimestamp("2016-01-01T00:00:00Z")));
         assertThat(order.getNotAfter(), is(parseTimestamp("2016-01-08T00:00:00Z")));
         assertThat(order.getCertificate().getLocation(), is(url("https://example.com/acme/cert/1234")));

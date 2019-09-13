@@ -13,7 +13,14 @@
  */
 package org.shredzone.acme4j.mock.model;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -22,7 +29,7 @@ import java.security.PublicKey;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.mock.connection.MockCertificateAuthority;
 import org.shredzone.acme4j.mock.connection.Repository;
@@ -78,7 +85,7 @@ public class MockAccountTest {
         Repository repository = new Repository();
         MockCertificateAuthority mockCa = new MockCertificateAuthority();
         MockOrder order = MockOrder.create(repository,
-                Collections.singleton(Identifier.dns("example.com")),
+                Collections.singleton(new DnsIdentifier("example.com")),
                 Collections.emptyList(),
                 mockCa);
         URI mailto = URI.create("mailto:acme@example.com");

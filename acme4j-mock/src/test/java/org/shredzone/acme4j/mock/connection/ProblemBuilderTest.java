@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.junit.Test;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
 import org.shredzone.acme4j.Problem;
 
@@ -94,8 +95,8 @@ public class ProblemBuilderTest {
     @Test
     public void testSubProblem() throws MalformedURLException, URISyntaxException {
         URL baseUrl = new URL("https://mock.test/resource");
-        Identifier identifier1 = Identifier.dns("example.org");
-        Identifier identifier2 = Identifier.dns("www.example.org");
+        Identifier identifier1 = new DnsIdentifier("example.org");
+        Identifier identifier2 = new DnsIdentifier("www.example.org");
 
         Problem sub1 = new ProblemBuilder(baseUrl)
                 .error("connection")

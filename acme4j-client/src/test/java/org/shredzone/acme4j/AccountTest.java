@@ -13,7 +13,13 @@
  */
 package org.shredzone.acme4j;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.shredzone.acme4j.toolbox.TestUtils.getJSON;
@@ -217,7 +223,7 @@ public class AccountTest {
         Account account = new Account(login);
         Authorization auth = account.preAuthorizeDomain(domainName);
 
-        assertThat(auth.getIdentifier().getDomain(), is(domainName));
+        assertThat(auth.getIdentifier().getValue(), is(domainName));
         assertThat(auth.getStatus(), is(Status.PENDING));
         assertThat(auth.getExpires(), is(nullValue()));
         assertThat(auth.getLocation(), is(locationUrl));

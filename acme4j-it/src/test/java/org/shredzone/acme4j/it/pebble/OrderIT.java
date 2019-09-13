@@ -15,8 +15,14 @@ package org.shredzone.acme4j.it.pebble;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.oneOf;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.security.KeyPair;
@@ -81,7 +87,7 @@ public class OrderIT extends PebbleITBase {
             Dns01Challenge challenge = auth.findChallenge(Dns01Challenge.TYPE);
             assertThat(challenge, is(notNullValue()));
 
-            String challengeDomainName = "_acme-challenge." + auth.getIdentifier().getDomain();
+            String challengeDomainName = "_acme-challenge." + auth.getIdentifier().getValue();
 
             client.dnsAddTxtRecord(challengeDomainName, challenge.getDigest());
 
@@ -103,10 +109,10 @@ public class OrderIT extends PebbleITBase {
             assertThat(challenge, is(notNullValue()));
 
             client.tlsAlpnAddCertificate(
-                        auth.getIdentifier().getDomain(),
+                    auth.getIdentifier().getValue(),
                         challenge.getAuthorization());
 
-            cleanup(() -> client.tlsAlpnRemoveCertificate(auth.getIdentifier().getDomain()));
+            cleanup(() -> client.tlsAlpnRemoveCertificate(auth.getIdentifier().getValue()));
 
             return challenge;
         }, OrderIT::standardRevoker);
@@ -167,7 +173,7 @@ public class OrderIT extends PebbleITBase {
         assertThat(order.getStatus(), is(Status.PENDING));
 
         for (Authorization auth : order.getAuthorizations()) {
-            assertThat(auth.getIdentifier().getDomain(), is(domain));
+            assertThat(auth.getIdentifier().getValue(), is(domain));
             assertThat(auth.getStatus(), is(Status.PENDING));
 
             if (auth.getStatus() == Status.VALID) {

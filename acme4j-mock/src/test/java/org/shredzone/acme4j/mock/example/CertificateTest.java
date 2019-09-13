@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.shredzone.acme4j.Certificate;
-import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Login;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.Problem;
@@ -77,7 +77,7 @@ public class CertificateTest {
         KeyPair domainKeyPair = KeyPairUtils.createKeyPair(2048);
 
         MockAcmeServer server = new MockAcmeServer();
-        MockOrder mockOrder = server.createOrder(Identifier.dns("example.com"));
+        MockOrder mockOrder = server.createOrder(new DnsIdentifier("example.com"));
         mockOrder.generateCsr(domainKeyPair);
         mockOrder.issueCertificate();
 
@@ -102,7 +102,7 @@ public class CertificateTest {
     public void testFailure() {
         // Set up a mock server and add an order
         MockAcmeServer server = new MockAcmeServer();
-        MockOrder mockOrder = server.createOrder(Identifier.dns("example.com"));
+        MockOrder mockOrder = server.createOrder(new DnsIdentifier("example.com"));
 
         // This time, there was an error
         Problem problem = new ProblemBuilder(mockOrder.getLocation())

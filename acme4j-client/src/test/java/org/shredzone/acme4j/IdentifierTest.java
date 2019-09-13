@@ -15,7 +15,6 @@ package org.shredzone.acme4j;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -37,37 +36,37 @@ public class IdentifierTest {
     }
 
     @Test
-    public void testGetters() {
-        Identifier id1 = new Identifier("foo", "123.456");
-        assertThat(id1.getType(), is("foo"));
-        assertThat(id1.getValue(), is("123.456"));
-        assertThat(id1.toString(), is("foo=123.456"));
+    public void testGetters() throws UnknownHostException {
+        Identifier id1 = new IpIdentifier("127.0.0.1");
+        assertThat(id1.getType(), is(Identifier.TYPE_IP));
+        assertThat(id1.getValue(), is("127.0.0.1"));
+        assertThat(id1.toString(), is(Identifier.TYPE_IP + "=127.0.0.1"));
         Map<String, Object> map1 = id1.toMap();
         assertThat(map1.size(), is(2));
-        assertThat(map1.get("type"), is("foo"));
-        assertThat(map1.get("value"), is("123.456"));
+        assertThat(map1.get("type"), is(Identifier.TYPE_IP));
+        assertThat(map1.get("value"), is("127.0.0.1"));
 
         JSONBuilder jb = new JSONBuilder();
-        jb.put("type", "bar");
-        jb.put("value", "654.321");
-        Identifier id2 = new Identifier(jb.toJSON());
-        assertThat(id2.getType(), is("bar"));
-        assertThat(id2.getValue(), is("654.321"));
-        assertThat(id2.toString(), is("bar=654.321"));
+        jb.put("type", Identifier.TYPE_DNS);
+        jb.put("value", "example.com");
+        Identifier id2 = new DnsIdentifier(jb.toJSON());
+        assertThat(id2.getType(), is(Identifier.TYPE_DNS));
+        assertThat(id2.getValue(), is("example.com"));
+        assertThat(id2.toString(), is(Identifier.TYPE_DNS + "=example.com"));
         Map<String, Object> map2 = id2.toMap();
         assertThat(map2.size(), is(2));
-        assertThat(map2.get("type"), is("bar"));
-        assertThat(map2.get("value"), is("654.321"));
+        assertThat(map2.get("type"), is(Identifier.TYPE_DNS));
+        assertThat(map2.get("value"), is("example.com"));
     }
 
     @Test
     public void testDns() {
-        Identifier id1 = Identifier.dns("example.com");
+        DnsIdentifier id1 = new DnsIdentifier("example.com");
         assertThat(id1.getType(), is(Identifier.TYPE_DNS));
         assertThat(id1.getValue(), is("example.com"));
         assertThat(id1.getDomain(), is("example.com"));
 
-        Identifier id2 = Identifier.dns("ëxämþlë.com");
+        DnsIdentifier id2 = new DnsIdentifier("ëxämþlë.com");
         assertThat(id2.getType(), is(Identifier.TYPE_DNS));
         assertThat(id2.getValue(), is("xn--xml-qla7ae5k.com"));
         assertThat(id2.getDomain(), is("xn--xml-qla7ae5k.com"));
@@ -75,67 +74,56 @@ public class IdentifierTest {
 
     @Test(expected = AcmeProtocolException.class)
     public void testNoDns() {
-        new Identifier("foo", "example.com").getDomain();
+        JSONBuilder jb = new JSONBuilder();
+        jb.put("type", Identifier.TYPE_IP);
+        jb.put("value", "127.0.0.1");
+        new DnsIdentifier(jb.toJSON()).getDomain();
     }
 
     @Test
     public void testIp() throws UnknownHostException {
-        Identifier id1 = Identifier.ip(InetAddress.getByName("192.168.1.2"));
+        IpIdentifier id1 = new IpIdentifier(InetAddress.getByName("192.168.1.2"));
         assertThat(id1.getType(), is(Identifier.TYPE_IP));
         assertThat(id1.getValue(), is("192.168.1.2"));
         assertThat(id1.getIP().getHostAddress(), is("192.168.1.2"));
 
-        Identifier id2 = Identifier.ip(InetAddress.getByName("2001:db8:85a3::8a2e:370:7334"));
+        IpIdentifier id2 = new IpIdentifier(InetAddress.getByName("2001:db8:85a3::8a2e:370:7334"));
         assertThat(id2.getType(), is(Identifier.TYPE_IP));
         assertThat(id2.getValue(), is("2001:db8:85a3:0:0:8a2e:370:7334"));
         assertThat(id2.getIP().getHostAddress(), is("2001:db8:85a3:0:0:8a2e:370:7334"));
 
-        Identifier id3 = Identifier.ip("192.168.2.99");
+        IpIdentifier id3 = new IpIdentifier("192.168.2.99");
         assertThat(id3.getType(), is(Identifier.TYPE_IP));
         assertThat(id3.getValue(), is("192.168.2.99"));
         assertThat(id3.getIP().getHostAddress(), is("192.168.2.99"));
     }
 
     @Test(expected = AcmeProtocolException.class)
-    public void testNoIp() {
-        new Identifier("foo", "example.com").getIP();
+    public void testNoIp() throws UnknownHostException {
+        JSONBuilder jb = new JSONBuilder();
+        jb.put("type", Identifier.TYPE_DNS);
+        jb.put("value", "example.com");
+        new IpIdentifier(jb.toJSON());
     }
 
     @Test
-    public void testEquals() {
-        Identifier idRef = new Identifier("foo", "123.456");
+    public void testEquals() throws UnknownHostException {
+        IpIdentifier idRef = new IpIdentifier("127.0.0.1");
 
-        Identifier id1 = new Identifier("foo", "123.456");
+        IpIdentifier id1 = new IpIdentifier("127.0.0.1");
         assertThat(idRef.equals(id1), is(true));
 
-        Identifier id2 = new Identifier("bar", "654.321");
+        IpIdentifier id2 = new IpIdentifier("192.168.0.1");
         assertThat(idRef.equals(id2), is(false));
 
-        Identifier id3 = new Identifier("foo", "555.666");
+        IpIdentifier id3 = new IpIdentifier("192.168.0.2");
         assertThat(idRef.equals(id3), is(false));
 
-        Identifier id4 = new Identifier("sna", "123.456");
+        IpIdentifier id4 = new IpIdentifier("192.168.0.3");
         assertThat(idRef.equals(id4), is(false));
 
         assertThat(idRef.equals(new Object()), is(false));
         assertThat(idRef.equals(null), is(false));
-    }
-
-    @Test
-    public void testNull() {
-        try {
-            new Identifier(null, "123.456");
-            fail("accepted null");
-        } catch (NullPointerException ex) {
-            // expected
-        }
-
-        try {
-            new Identifier("foo", null);
-            fail("accepted null");
-        } catch (NullPointerException ex) {
-            // expected
-        }
     }
 
 }

@@ -13,8 +13,15 @@
  */
 package org.shredzone.acme4j.util;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,7 +52,8 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.DnsIdentifier;
+import org.shredzone.acme4j.IpIdentifier;
 
 /**
  * Unit tests for {@link CSRBuilder}.
@@ -78,10 +86,10 @@ public class CSRBuilderTest {
         builder.addIP(InetAddress.getByName("192.168.0.2"));
         builder.addIPs(InetAddress.getByName("10.0.0.1"), InetAddress.getByName("10.0.0.2"));
         builder.addIPs(Arrays.asList(InetAddress.getByName("fd00::1"), InetAddress.getByName("fd00::2")));
-        builder.addIdentifier(Identifier.dns("ide1.nt"));
-        builder.addIdentifier(Identifier.ip("192.168.5.5"));
-        builder.addIdentifiers(Identifier.dns("ide2.nt"), Identifier.ip("192.168.5.6"));
-        builder.addIdentifiers(Arrays.asList(Identifier.dns("ide3.nt"), Identifier.ip("192.168.5.7")));
+        builder.addIdentifier(new DnsIdentifier("ide1.nt"));
+        builder.addIdentifier(new IpIdentifier("192.168.5.5"));
+        builder.addIdentifiers(new DnsIdentifier("ide2.nt"), new IpIdentifier("192.168.5.6"));
+        builder.addIdentifiers(Arrays.asList(new DnsIdentifier("ide3.nt"), new IpIdentifier("192.168.5.7")));
 
         builder.setCountry("XX");
         builder.setLocality("Testville");
@@ -122,10 +130,10 @@ public class CSRBuilderTest {
         builder.addIP(InetAddress.getByName("192.168.0.2"));
         builder.addIPs(InetAddress.getByName("10.0.0.1"), InetAddress.getByName("10.0.0.2"));
         builder.addIPs(Arrays.asList(InetAddress.getByName("fd00::1"), InetAddress.getByName("fd00::2")));
-        builder.addIdentifier(Identifier.dns("ide1.nt"));
-        builder.addIdentifier(Identifier.ip("192.168.5.5"));
-        builder.addIdentifiers(Identifier.dns("ide2.nt"), Identifier.ip("192.168.5.6"));
-        builder.addIdentifiers(Arrays.asList(Identifier.dns("ide3.nt"), Identifier.ip("192.168.5.7")));
+        builder.addIdentifier(new DnsIdentifier("ide1.nt"));
+        builder.addIdentifier(new IpIdentifier("192.168.5.5"));
+        builder.addIdentifiers(new DnsIdentifier("ide2.nt"), new IpIdentifier("192.168.5.6"));
+        builder.addIdentifiers(Arrays.asList(new DnsIdentifier("ide3.nt"), new IpIdentifier("192.168.5.7")));
 
         builder.setCountry("XX");
         builder.setLocality("Testville");
@@ -238,15 +246,6 @@ public class CSRBuilderTest {
     public void testNoDomain() throws IOException {
         CSRBuilder builder = new CSRBuilder();
         builder.sign(testKey);
-    }
-
-    /**
-     * Make sure an exception is thrown when an unknown identifier type is used.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testUnknownType() {
-        CSRBuilder builder = new CSRBuilder();
-        builder.addIdentifier(new Identifier("UnKnOwN", "123"));
     }
 
     /**

@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
@@ -48,13 +49,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.WillClose;
 import javax.annotation.concurrent.Immutable;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.lang.JoseException;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
+import org.shredzone.acme4j.IpIdentifier;
 import org.shredzone.acme4j.Problem;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.exception.AcmeProtocolException;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A model containing a JSON result. The content is immutable.
@@ -381,7 +385,20 @@ public final class JSON implements Serializable {
          */
         public Identifier asIdentifier() {
             required();
-            return new Identifier(asObject());
+
+            JSON json = asObject();
+            switch (json.get(Identifier.KEY_TYPE).asString()) {
+            case Identifier.TYPE_DNS:
+                return new DnsIdentifier(json);
+            case Identifier.TYPE_IP:
+                try {
+                    return new IpIdentifier(json);
+                } catch (UnknownHostException ex) {
+                    throw new AcmeProtocolException("bad ip identifier value", ex);
+                }
+            default:
+                throw new AcmeProtocolException(path + ": unrecognized identifier type: " + val.toString());
+            }
         }
 
         /**

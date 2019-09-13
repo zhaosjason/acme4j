@@ -13,7 +13,14 @@
  */
 package org.shredzone.acme4j.mock.model;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -21,6 +28,7 @@ import java.time.Instant;
 import java.util.Collections;
 
 import org.junit.Test;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Http01Challenge;
@@ -32,7 +40,7 @@ import org.shredzone.acme4j.toolbox.JSONBuilder;
  * Unit tests for {@link MockAuthorization}.
  */
 public class MockAuthorizationTest {
-    private static final Identifier IDENTIFIER = Identifier.dns("example.org");
+    private static final Identifier IDENTIFIER = new DnsIdentifier("example.org");
 
     /**
      * Test creation and default values.

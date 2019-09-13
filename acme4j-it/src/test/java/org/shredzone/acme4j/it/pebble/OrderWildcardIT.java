@@ -16,8 +16,15 @@ package org.shredzone.acme4j.it.pebble;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.oneOf;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
@@ -78,7 +85,7 @@ public class OrderWildcardIT extends PebbleITBase {
         assertThat(order.getStatus(), is(Status.PENDING));
 
         for (Authorization auth : order.getAuthorizations()) {
-            assertThat(auth.getIdentifier().getDomain(), is(TEST_DOMAIN));
+            assertThat(auth.getIdentifier().getValue(), is(TEST_DOMAIN));
             assertThat(auth.getStatus(), is(Status.PENDING));
 
             if (auth.getStatus() == Status.VALID) {

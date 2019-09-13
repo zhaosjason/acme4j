@@ -13,7 +13,13 @@
  */
 package org.shredzone.acme4j.mock;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -25,6 +31,7 @@ import java.util.Optional;
 import org.junit.Test;
 import org.shredzone.acme4j.Account;
 import org.shredzone.acme4j.Authorization;
+import org.shredzone.acme4j.DnsIdentifier;
 import org.shredzone.acme4j.Identifier;
 import org.shredzone.acme4j.Login;
 import org.shredzone.acme4j.Order;
@@ -191,7 +198,7 @@ public class MockAcmeServerTest {
      */
     @Test
     public void testAuthorization() {
-        Identifier identifier = Identifier.dns("example.org");
+        Identifier identifier = new DnsIdentifier("example.org");
 
         MockAcmeServer server = new MockAcmeServer();
 
@@ -211,7 +218,7 @@ public class MockAcmeServerTest {
         assertThat(server.getIdentifiers().size(), is(1));
         assertThat(auth2, sameInstance(auth));
 
-        Optional<MockAuthorization> missingAuth = server.findAuthorization(Identifier.dns("example.com"));
+        Optional<MockAuthorization> missingAuth = server.findAuthorization(new DnsIdentifier("example.com"));
         assertThat(missingAuth.isPresent(), is(false));
     }
 
@@ -237,7 +244,7 @@ public class MockAcmeServerTest {
      */
     @Test
     public void testCreateFetchAuthorization() {
-        Identifier identifier = Identifier.dns("example.com");
+        Identifier identifier = new DnsIdentifier("example.com");
 
         MockAcmeServer server = new MockAcmeServer();
         MockAuthorization createdAuth = server.createAuthorization(identifier);
@@ -258,7 +265,7 @@ public class MockAcmeServerTest {
         MockChallenge createdChallenge = server.createChallenge(Http01Challenge.TYPE);
         assertThat(createdChallenge, not(nullValue()));
 
-        MockAuthorization createdAuth = server.createAuthorization(Identifier.dns("example.com"));
+        MockAuthorization createdAuth = server.createAuthorization(new DnsIdentifier("example.com"));
         createdAuth.getChallenges().add(createdChallenge);
 
         Login login = server.createLogin();
@@ -277,7 +284,7 @@ public class MockAcmeServerTest {
     public void testCreateFetchOrder() {
         MockAcmeServer server = new MockAcmeServer();
 
-        MockOrder createdOrder = server.createOrder(Identifier.dns("example.com"));
+        MockOrder createdOrder = server.createOrder(new DnsIdentifier("example.com"));
         assertThat(createdOrder, not(nullValue()));
 
         Login login = server.createLogin();
